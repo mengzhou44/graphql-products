@@ -1,6 +1,7 @@
 module.exports = {
   products: (parent, args, { db }) => {
     let { input } = args;
+    let result = db.products;
     if (input) {
       const { onSale, avgRatings } = input;
       let result = [];
@@ -17,14 +18,19 @@ module.exports = {
           }
         }
       }
-      return result;
     }
-    return db.products;
+
+    return result.map((product) => {
+      product.category = db.categories.find(
+        (category) => product.categoryId === category.id
+      );
+      return product;
+    });
   },
   categories: (parent, args, { db }) => db.categories,
   product: (parent, args, { db }) => {
     const id = args.id;
-    return db.products.find((item) => item.id === id);
+    return  db.products.find((item) => item.id === id);
   },
   category: (parent, args, { db }) => {
     const id = args.id;
